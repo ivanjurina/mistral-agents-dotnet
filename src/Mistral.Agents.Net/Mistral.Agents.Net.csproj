@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <PackageId>Mistral.Agents.Net</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Ivan Jurina</Authors>
+    <Description>Unofficial .NET client for the Mistral Agents and Conversations API: persistent agents, stateful conversations, built-in connectors (web search, code interpreter, document library), handoffs, and function tools. Async-first, zero dependencies. Not affiliated with Mistral AI.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>mistral;agents;conversations;ai-agents;llm;connectors;handoffs</PackageTags>
+    <RepositoryUrl>https://github.com/ivanjurina/mistral-agents-dotnet</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+</Project>
