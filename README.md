@@ -1,5 +1,9 @@
 # Mistral.Agents.Net: the Mistral Agents API from .NET
 
+[![NuGet](https://img.shields.io/nuget/v/Mistral.Agents.Net.svg)](https://www.nuget.org/packages/Mistral.Agents.Net/) [![NuGet downloads](https://img.shields.io/nuget/dt/Mistral.Agents.Net.svg)](https://www.nuget.org/packages/Mistral.Agents.Net/)
+
+📦 **NuGet:** [nuget.org/packages/Mistral.Agents.Net](https://www.nuget.org/packages/Mistral.Agents.Net)
+
 unofficial .net client for the [Mistral Agents & Conversations API](https://docs.mistral.ai/studio-api/agents/introduction). the community .net sdks cover chat completions, embeddings and function calling well; this covers the agentic layer they don't: persistent agents, stateful conversations, built-in connectors, and multi-agent handoffs.
 
 not affiliated with Mistral AI. complements [tghamm/Mistral.SDK](https://github.com/tghamm/Mistral.SDK) rather than competing with it.
