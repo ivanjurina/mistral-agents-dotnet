@@ -56,7 +56,8 @@ while (Console.ReadLine() is { Length: > 0 } question)
     while (result.FunctionCalls.Count > 0)
     {
         var call = result.FunctionCalls[0];
-        var answer = HandleFunction(call.FunctionName!, call.Arguments);
+        using var argsDoc = call.ParseArguments();
+        var answer = HandleFunction(call.FunctionName!, argsDoc.RootElement);
         Console.WriteLine($"[agent called {call.FunctionName} -> {answer}]");
         var next = await client.SubmitToolResultAsync(conversationId!, call.ToolCallId!, answer);
         result.Dispose();

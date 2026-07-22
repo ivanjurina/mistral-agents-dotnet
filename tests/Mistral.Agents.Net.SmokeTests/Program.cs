@@ -105,7 +105,8 @@ static MistralAgentsClient ClientFor(RecordingHandler handler) =>
     Assert(calls.Count == 1, "function call surfaced");
     Assert(calls[0].FunctionName == "get_order", "function name read");
     Assert(calls[0].ToolCallId == "call_7", "tool_call_id read");
-    Assert(calls[0].Arguments.GetProperty("id").GetString() == "1234", "arguments read");
+    using (var argsDoc = calls[0].ParseArguments())
+        Assert(argsDoc.RootElement.GetProperty("id").GetString() == "1234", "arguments read (object form)");
 
     using var res2 = await client.SubmitToolResultAsync("conv_9", "call_7", "Order 1234 shipped.");
     Assert(res2.OutputText == "Order 1234 shipped.", "conversation continues after tool result");
@@ -115,6 +116,18 @@ static MistralAgentsClient ClientFor(RecordingHandler handler) =>
     Assert(input0.GetProperty("type").GetString() == "function.result", "function.result input type");
     Assert(input0.GetProperty("tool_call_id").GetString() == "call_7", "tool result carries call id");
     Assert(input0.GetProperty("result").GetString() == "Order 1234 shipped.", "tool result forwarded");
+}
+
+// ---------- function arguments as a JSON STRING (real Mistral wire format) ----------
+{
+    // Mistral returns arguments as a stringified JSON, not an object. ParseArguments must handle it.
+    var withStringArgs = """
+    {"conversation_id":"c","outputs":[{"type":"function.call","name":"f","tool_call_id":"t","arguments":"{\"name\":\"q3_revenue\"}"}]}
+    """;
+    using var client = ClientFor(new RecordingHandler(_ => Json(withStringArgs)));
+    using var res = await client.StartConversationAsync(new StartConversationRequest { AgentId = "a", Inputs = "x" });
+    using var argsDoc = res.FunctionCalls[0].ParseArguments();
+    Assert(argsDoc.RootElement.GetProperty("name").GetString() == "q3_revenue", "arguments parsed from json string form");
 }
 
 // ---------- append conversation ----------

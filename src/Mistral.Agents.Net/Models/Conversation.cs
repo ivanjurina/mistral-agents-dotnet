@@ -126,8 +126,28 @@ public readonly struct ConversationOutput(JsonElement element)
     /// <summary>For function.call entries: the call id to reference in the result.</summary>
     public string? ToolCallId => element.TryGetProperty("tool_call_id", out var v) ? v.GetString() : null;
 
-    /// <summary>For function.call entries: the raw arguments element.</summary>
+    /// <summary>
+    /// For function.call entries: the raw arguments element as sent. Note that Mistral
+    /// returns arguments as a JSON <em>string</em>, not an object; prefer
+    /// <see cref="ParseArguments"/>, which normalizes both forms.
+    /// </summary>
     public JsonElement Arguments => element.TryGetProperty("arguments", out var v) ? v : default;
+
+    /// <summary>
+    /// Parses function-call arguments into a document, handling Mistral's string-encoded
+    /// form (the API sends arguments as a JSON string) as well as a plain object. The
+    /// caller owns the returned document and should dispose it.
+    /// </summary>
+    public JsonDocument ParseArguments()
+    {
+        var v = Arguments;
+        return v.ValueKind switch
+        {
+            JsonValueKind.String => JsonDocument.Parse(string.IsNullOrEmpty(v.GetString()) ? "{}" : v.GetString()!),
+            JsonValueKind.Object or JsonValueKind.Array => JsonDocument.Parse(v.GetRawText()),
+            _ => JsonDocument.Parse("{}"),
+        };
+    }
 
     /// <summary>The raw JSON of this output entry.</summary>
     public JsonElement Raw => element;

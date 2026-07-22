@@ -52,10 +52,16 @@ agentRequest.Tools.Add(AgentTool.FunctionTool(FunctionDefinition.FromJsonSchema(
 // when the agent calls it:
 foreach (var call in turn.FunctionCalls)
 {
-    var result = LookUp(call.FunctionName!, call.Arguments);
+    using var args = call.ParseArguments();               // see note below
+    var result = LookUp(call.FunctionName!, args.RootElement);
     using var next = await client.SubmitToolResultAsync(turn.ConversationId!, call.ToolCallId!, result);
 }
 ```
+
+> **Wire-format note:** the Agents API returns function-call `arguments` as a JSON *string*,
+> not a nested object (a common LLM-API quirk the docs don't call out). `ParseArguments()`
+> normalizes both forms so you always get a usable document. This one cost a live debugging
+> session, so it's handled in the library.
 
 ### multi-agent handoffs
 
